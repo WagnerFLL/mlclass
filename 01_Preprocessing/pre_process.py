@@ -16,38 +16,29 @@ def predictKnn():
     print('\n - Lendo o arquivo com o dataset sobre diabetes')
     data = pd.read_csv('diabetes_test.csv')
 
-    # Criando X and y par ao algorítmo de aprendizagem de máquina.\
     print(' - Criando X e y para o algoritmo de aprendizagem a partir do arquivo diabetes_dataset')
-    # Caso queira modificar as colunas consideradas basta algera o array a seguir.
     feature_cols = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
                     'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age']
     X = data[feature_cols]
     y = data.Outcome
 
-    # Ciando o modelo preditivo para a base trabalhada
     print(' - Criando modelo preditivo')
     neigh = KNeighborsClassifier(n_neighbors=3)
     neigh.fit(X, y)
 
-    # realizando previsões com o arquivo de
     print(' - Aplicando modelo e enviando para o servidor')
     data_app = pd.read_csv('diabetes_sample_test.csv')
     y_pred = neigh.predict(data_app)
 
-    # Enviando previsões realizadas com o modelo para o servidor
     URL = "https://aydanomachado.com/MachineLearning/PreProcessing.php"
 
-    # TODO Substituir pela sua chave aqui
     DEV_KEY = "Café com leite"
 
-    # json para ser enviado para o servidor
     data = {'dev_key': DEV_KEY,
             'predictions': pd.Series(y_pred).to_json(orient='values')}
 
-    # Enviando requisição e salvando o objeto resposta
     r = requests.post(url=URL, data=data)
 
-    # Extraindo e imprimindo o texto da resposta
     pastebin_url = r.text
     print(" - Resposta do servidor:\n", r.text, "\n")
 
@@ -73,7 +64,6 @@ def multiply_features(data_norm, sample, scalars):
     bmi = scalars[5]
     diabetes_pedigree_function = scalars[6]
     age = scalars[7]
-    # data = data.convert_objects()
     if sample == 0:
         data_norm.columns = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI',
                              'DiabetesPedigreeFunction', 'Age', 'Outcome']
@@ -90,8 +80,7 @@ def multiply_features(data_norm, sample, scalars):
     data_norm.loc[:, 'DiabetesPedigreeFunction'] *= diabetes_pedigree_function
     data_norm.loc[:, 'Age'] *= age
 
-    # print(data_norm.to_string())
-    # print(data_norm.dtypes())
+
     data_norm = data_norm.round(6)
     return data_norm
 
@@ -111,21 +100,18 @@ def neighbors(scalar):
     size = len(scalar)
     list_of_neighbors = []
     for i in range(size):
-        #print(scalar)
         temp1 = scalar.copy()
         temp2 = scalar.copy()
         temp1[i] += constant
         temp2[i] -= constant
         list_of_neighbors.append(temp1)
         list_of_neighbors.append(temp2)
-    #print(list_of_neighbors)
     return list_of_neighbors
 
 
 def predict(best_accuracy, scalars, data, data_sample):
     accuracy = predictKnn()
     if accuracy > best_accuracy:
-        #print("Accuracy= ", accuracy, "Count", + count)
         best_accuracy = accuracy
         temp = "best_guesses/accuracy" + str(accuracy) + "KEY" + id_generator()
         os.mkdir(temp)
@@ -158,7 +144,6 @@ def test_accuracy(data, data_sample, guess, best_accuracy_global, flag):
         best_accuracy = predict(best_accuracy_global, guess, data, data_sample)
     else:
         best_accuracy = predictKnn()
-    #
     return best_accuracy
 
 
@@ -166,7 +151,6 @@ def simulated_annealing(data, data_sample, start, best_accuracy_global):
     current = start
     while True:
         neigh = neighbors(start)
-        #print(neigh)
         best_accuracy = 0
         best_neighbor = None
         for i in neigh:
@@ -183,19 +167,6 @@ def simulated_annealing(data, data_sample, start, best_accuracy_global):
 def generate_random(i):
     return random_with_range(0, 5)
 
-
-# def test_sa():
-#     scalars = [1, 1, 1, 1, 1, 1, 1, 1]
-#     count = 0
-#     while count < 20:
-#         a = simulated_annealing(scalars)
-#         print(scalars, " ", a)
-#         scalars = list(map(generate_random, scalars))
-#         count += 1
-
-#best_accuracy = 0
-
-
 def scalar():
     best_accuracy = 0
     count = 0
@@ -211,22 +182,10 @@ def scalar():
         data = pd.read_csv('diabetes_norm.csv')
         ans = simulated_annealing(data, data_sample, scalars, best_accuracy)
         best_accuracy = test_accuracy(data, data_sample, ans, best_accuracy, True)
-        print("JUMP", best_accuracy)
-        # pregnancies = random_with_range(0, 7)
-        # glucose = random_with_range(1, 10)
-        # blood_pressure = random_with_range(0, 6)
-        # skin_thickness = random_with_range(0, 3)
-        # insulin = random_with_range(1, 15)
-        # bmi = random_with_range(0.5, 9)
-        # diabetes_pedigree_function = random_with_range(0, 8)
-        # age = random_with_range(0.5, 10)
         scalars = list(map(generate_random, scalars))
         count += 1
 
-
 def main():
     scalar()
-    #test_sa()
-
 
 main()
