@@ -41,3 +41,5 @@ A base consiste de informações de um molusco chamado Abalone, e o objetivo do 
 7. **Viscera weight**: peso em gramas das víceras após escorrer
 8. **Shell weight**: peso em gramas para a concha após estar seca
 9. **Type**: variável de classe (1, 2 ou 1) para o abalone
+
+https://docs.google.com/presentation/d/1EWxllzIAv9W308veJj2xXREYebcboPEnKcgGYPSam4w/edit?usp=sharing
